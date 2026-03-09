@@ -30,17 +30,29 @@ def getImage(sheet, frame, width, height, scale, color):
     image.set_colorkey(color)
     return image
 
-frame0 = getImage(sprite_sheet_image, 8, 24, 24, 2, BLACK)
+
+walk_frames = [
+    getImage(sprite_sheet_image, 0, 24, 24, 2, BLACK),
+    getImage(sprite_sheet_image, 5, 24, 24, 2, BLACK),
+    getImage(sprite_sheet_image, 6, 24, 24, 2, BLACK),
+    getImage(sprite_sheet_image, 7, 24, 24, 2, BLACK),
+    getImage(sprite_sheet_image, 8, 24, 24, 2, BLACK),
+    getImage(sprite_sheet_image, 9, 24, 24, 2, BLACK),
+    getImage(sprite_sheet_image, 10, 24, 24, 2, BLACK),
+    getImage(sprite_sheet_image, 23, 24, 24, 2, BLACK)
+]
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface((10, 10))
-        self.image.fill(GRAY)
+        self.walk_frame = walk_frames
+        self.walk_frame_index = 0
+        self.image = self.walk_frame[self.walk_frame_index]
+        #self.image.fill(GRAY)
         self.rect = self.image.get_rect()
         self.rect.x = 245
         self.rect.y = GROUND_Y
-
         self.velocity_x = 0
         self.velocity_y = 0
         self.isOnGround = True
@@ -51,12 +63,35 @@ class Player(pygame.sprite.Sprite):
         self.dashDuration = 0.15
         self.dashSpeed = 800
 
+        self.animation_timer = 0
+        self.animation_speed = 0.1
+
+    def update (self, dt):
+        self.animation_timer += dt
+
+        frame = self.walk_frame[self.walk_frame_index]
+        if self.velocity_x == 0:
+            frame = self.walk_frame[0]
+        if self.dash:
+            frame = self.walk_frame[7]
+        elif self.animation_timer > self.animation_speed and self.velocity_x != 0:
+            self.walk_frame_index = (self.walk_frame_index + 1) % (len (self.walk_frame) - 1)
+            self.animation_timer = 0
+            frame = self.walk_frame[self.walk_frame_index]
+
+        if self.mostRecentXDirection == 'Left':
+            frame = pygame.transform.flip(frame, True, False)
+            
+        self.image = frame
+        self.image.set_colorkey(BLACK)
+        return
 
 player = Player()
 running = True
 
 while running:
     dt = clock.tick(60) / 1000  # seconds per frame
+    player.update(dt)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -125,7 +160,7 @@ while running:
         player.canDash = False
 
     screen.fill(WHITE)
-    screen.blit(frame0, (0, 0))
+    #screen.blit(frame_standing, (0, 0))
     screen.blit(player.image, player.rect)
     pygame.display.flip()
 
