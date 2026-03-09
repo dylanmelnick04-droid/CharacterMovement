@@ -2,6 +2,7 @@ import pygame
 
 pygame.init()
 
+devtools = 'on'
 # Constants
 WIDTH, HEIGHT = 500, 500
 WHITE = (255, 255, 255)
@@ -184,7 +185,7 @@ while running:
     player.velocity_y += GRAVITY * dt
 
     # apply movement
-    if player.hitbox.right < PLAYER_RIGHT_LIMIT and player.hitbox.left > PLAYER_LEFT_LIMIT:
+    if player.hitbox.right <= PLAYER_RIGHT_LIMIT and player.hitbox.left >= PLAYER_LEFT_LIMIT:
         # Horizontal movement
         player.hitbox.x += player.velocity_x * dt
         for boundary in boundary_list:
@@ -200,11 +201,11 @@ while running:
         #player.rect.y -= 1
 
         player.isOnEdgeOfScreen = False
-    elif player.hitbox.x > PLAYER_RIGHT_LIMIT:
+    elif player.hitbox.right > PLAYER_RIGHT_LIMIT:
         player.hitbox.right = PLAYER_RIGHT_LIMIT
         x_offset += player.velocity_x * dt
         player.isOnEdgeOfScreen = True
-    elif player.hitbox.x < PLAYER_LEFT_LIMIT:
+    elif player.hitbox.left < PLAYER_LEFT_LIMIT:
         player.hitbox.left = PLAYER_LEFT_LIMIT
         x_offset += player.velocity_x * dt
         player.isOnEdgeOfScreen = True
@@ -242,8 +243,9 @@ while running:
     screen.blit(player.image, player.rect)
     for boundary in boundary_list:
         screen.blit(boundary.image, boundary.rect)
-    print(player.hitbox)
-    pygame.draw.rect(screen, (255,0,0), player.hitbox, 2)
+    if devtools == 'on':
+        print(player.hitbox)
+        pygame.draw.rect(screen, (255,0,0), player.hitbox, 2)
     pygame.display.flip()
 
 pygame.quit()
