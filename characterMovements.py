@@ -12,6 +12,7 @@ pygame.display.set_caption("Character Mechanics")
 
 clock = pygame.time.Clock()
 sprite_sheet_image = pygame.image.load('CharacterMovements/character.png').convert_alpha()
+brick_sheet_image = pygame.image.load('CharacterMovements/square_brick.jpg').convert_alpha()
 
 GRAVITY = 1500
 ACCELERATION = 1500
@@ -24,7 +25,7 @@ GROUND_Y = 450
 BLACK = (0, 0, 0)
 
 PLAYER_LEFT_LIMIT = 100
-PLAYER_RIGHT_LIMIT = 400
+PLAYER_RIGHT_LIMIT = 376
 
 def getImage(sheet, frame, width, height, scale, color):
     image = pygame.Surface((width, height)).convert_alpha()
@@ -70,8 +71,16 @@ class Player(pygame.sprite.Sprite):
         self.animation_timer = 0
         self.animation_speed = 0.1
 
+        self.hitbox = self.rect.inflate(WIDTH * -0.06, HEIGHT * -0.02)
+        self.hitbox.center = self.rect.center
+        self.hitbox.centerx -= 1
+        self.hitbox.centery += 1
+
     def update (self, dt):
         self.animation_timer += dt
+        self.hitbox.center = self.rect.center
+        self.hitbox.centerx -= 1
+        self.hitbox.centery += 1
 
         frame = self.walk_frame[self.walk_frame_index]
         if self.velocity_x == 0:
@@ -93,8 +102,9 @@ class Player(pygame.sprite.Sprite):
 class Boundary(pygame.sprite.Sprite):
     def __init__(self, module_x, module_y):
         super().__init__()
-        self.image = pygame.Surface((50, 50))
-        self.image.fill(GRAY)
+        self.image = pygame.transform.scale(brick_sheet_image,(50, 50))
+        self.rect = self.image.get_rect()
+        #self.image.fill(GRAY)
         self.rect = self.image.get_rect()
         self.rect.x = module_x
         self.rect.y = module_y
@@ -160,7 +170,7 @@ while running:
                 player.velocity_x = 0
     if player.dash:
         player.dashTime -= dt
-        player.velocity_y = 0
+        #player.velocity_y = 0
 
         if player.dashTime <= 0:
             player.dash = False
@@ -174,36 +184,47 @@ while running:
     player.velocity_y += GRAVITY * dt
 
     # apply movement
-    if player.rect.x <= PLAYER_RIGHT_LIMIT and player.rect.x >= PLAYER_LEFT_LIMIT:
-        player.rect.x += player.velocity_x * dt
+    if player.hitbox.right < PLAYER_RIGHT_LIMIT and player.hitbox.left > PLAYER_LEFT_LIMIT:
+        # Horizontal movement
+        player.hitbox.x += player.velocity_x * dt
         for boundary in boundary_list:
-            if player.rect.colliderect(boundary.rect):
-                if player.velocity_x < 0:
-                    player.rect.left = boundary.rect.right
+            if player.hitbox.colliderect(boundary.rect):
                 if player.velocity_x > 0:
-                    player.rect.right = boundary.rect.left
+                    player.hitbox.right = boundary.rect.left
+                elif player.velocity_x < 0:
+                    player.hitbox.left = boundary.rect.right
                 player.velocity_x = 0
 
+        #player.rect.center = player.hitbox.center
+        #player.rect.x += 1
+        #player.rect.y -= 1
+
         player.isOnEdgeOfScreen = False
-    elif player.rect.x > PLAYER_RIGHT_LIMIT:
-        player.rect.x = PLAYER_RIGHT_LIMIT
+    elif player.hitbox.x > PLAYER_RIGHT_LIMIT:
+        player.hitbox.right = PLAYER_RIGHT_LIMIT
         x_offset += player.velocity_x * dt
         player.isOnEdgeOfScreen = True
-    elif player.rect.x < PLAYER_LEFT_LIMIT:
-        player.rect.x = PLAYER_LEFT_LIMIT
+    elif player.hitbox.x < PLAYER_LEFT_LIMIT:
+        player.hitbox.left = PLAYER_LEFT_LIMIT
         x_offset += player.velocity_x * dt
         player.isOnEdgeOfScreen = True
     
-    player.rect.y += player.velocity_y * dt
+    # Vertical movement
+    player.hitbox.y += player.velocity_y * dt
     for boundary in boundary_list:
-            if player.rect.colliderect(boundary.rect):
-                if player.velocity_y > 0:
-                    player.rect.bottom = boundary.rect.top
-                    player.velocity_y = 0
-                    player.isOnGround = True
-                if player.velocity_y < 0:
-                    player.rect.top = boundary.rect.bottom
+        if player.hitbox.colliderect(boundary.rect):
+            if player.velocity_y > 0:
+                player.hitbox.bottom = boundary.rect.top
                 player.velocity_y = 0
+                player.isOnGround = True
+            elif player.velocity_y < 0:
+                player.hitbox.top = boundary.rect.bottom
+                player.velocity_y = 0
+
+    # Sync sprite rect to hitbox
+    player.rect.center = player.hitbox.center
+    player.rect.x += 1
+    player.rect.y -= 1
 
     for boundary in boundary_list:
         boundary.update(x_offset)
@@ -221,6 +242,8 @@ while running:
     screen.blit(player.image, player.rect)
     for boundary in boundary_list:
         screen.blit(boundary.image, boundary.rect)
+    print(player.hitbox)
+    pygame.draw.rect(screen, (255,0,0), player.hitbox, 2)
     pygame.display.flip()
 
 pygame.quit()
