@@ -12,8 +12,8 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Character Mechanics")
 
 clock = pygame.time.Clock()
-sprite_sheet_image = pygame.image.load('CharacterMovements/character.png').convert_alpha()
-brick_sheet_image = pygame.image.load('CharacterMovements/square_brick.jpg').convert_alpha()
+sprite_sheet_image = pygame.image.load('character.png').convert_alpha()
+brick_sheet_image = pygame.image.load('square_brick.jpg').convert_alpha()
 
 GRAVITY = 1500
 ACCELERATION = 1500
@@ -156,7 +156,7 @@ while running:
         player.velocity_x -= ACCELERATION * dt
         player.mostRecentXDirection = 'Left'
 
-    if keys[pygame.K_RIGHT] and player.isOnGround:
+    if keys[pygame.K_RIGHT]:
         player.velocity_x += ACCELERATION * dt
         player.mostRecentXDirection = 'Right'
 
