@@ -7,6 +7,7 @@ pygame.init()
 
 devtools = 'on'
 healthbars = 'on'
+MAP = 'map1'
 # Constants
 WIDTH, HEIGHT = 500, 500
 WHITE = (255, 255, 255)
@@ -25,7 +26,7 @@ DASH_ACCELERATION = 3000
 FRICTION = 1200
 MAX_SPEED = 400
 MAX_DASH_SPEED = 700
-JUMP_STRENGTH = -450
+JUMP_STRENGTH = -500
 GROUND_Y = 450
 BLACK = (0, 0, 0)
 GREEN = (0, 122, 122)
@@ -102,6 +103,10 @@ class Player(pygame.sprite.Sprite):
         self.healthbar.center = self.rect.center
         self.healthbar.centerx -= 1
         self.healthbar.centery -= 30
+
+        self.lives = 3
+
+        self.alive = True
         
     def update (self, dt):
         self.animation_timer += dt
@@ -176,30 +181,34 @@ def handle_event(player, event):
             else:
                 player.velocity_x = -player.dashSpeed
 
+def checkHealth(player, dt):
+    if player.rect.y == GROUND_Y:
+        screen.fill(BLACK)
+        player.alive = False
+        player.lives -= 1
+        if player.lives != 0:
+            # respawn
+            player.health = 100
+            player.alive = True
+            player.rect.y = 0
+            player.rect.x = 245
+        else:
+            return False
+
 def apply_physics(player, dt):
     global x_offset
 
-    if player.hitbox.right <= PLAYER_RIGHT_LIMIT and player.hitbox.left >= PLAYER_LEFT_LIMIT:
-        player.hitbox.x += player.velocity_x * dt
-        for boundary in boundary_list:
-            if player.hitbox.colliderect(boundary.rect):
-                if player.velocity_x > 0:
-                    player.hitbox.right = boundary.rect.left
-                elif player.velocity_x < 0:
-                    player.hitbox.left = boundary.rect.right
-                player.velocity_x = 0
+    #if player.hitbox.right <= PLAYER_RIGHT_LIMIT and player.hitbox.left >= PLAYER_LEFT_LIMIT:
+    player.hitbox.x += player.velocity_x * dt
+    for boundary in boundary_list:
+        if player.hitbox.colliderect(boundary.rect):
+            if player.velocity_x > 0:
+                player.hitbox.right = boundary.rect.left
+            elif player.velocity_x < 0:
+                player.hitbox.left = boundary.rect.right
+            player.velocity_x = 0
 
-        player.isOnEdgeOfScreen = False
-
-    elif player.hitbox.right > PLAYER_RIGHT_LIMIT:
-        player.hitbox.right = PLAYER_RIGHT_LIMIT
-        x_offset += player.velocity_x * dt
-        player.isOnEdgeOfScreen = True
-
-    elif player.hitbox.left < PLAYER_LEFT_LIMIT:
-        player.hitbox.left = PLAYER_LEFT_LIMIT
-        x_offset += player.velocity_x * dt
-        player.isOnEdgeOfScreen = True
+    player.isOnEdgeOfScreen = False
 
     # Vertical
     player.hitbox.y += player.velocity_y * dt
@@ -232,7 +241,7 @@ def apply_physics(player, dt):
 class Boundary(pygame.sprite.Sprite):
     def __init__(self, module_x, module_y):
         super().__init__()
-        self.image = pygame.transform.scale(brick_sheet_image,(50, 50))
+        self.image = pygame.transform.scale(brick_sheet_image,(25, 25))
         self.rect = self.image.get_rect()
         #self.image.fill(GRAY)
         self.rect = self.image.get_rect()
@@ -242,13 +251,38 @@ class Boundary(pygame.sprite.Sprite):
         self.rect.x -= x_offset
 
 boundary_list = []
-for i in range(15):
-    boundary = Boundary(-250 + 50 * i, 425)
-    boundary_list.append(boundary)
+if MAP == 'map1':
+
+    for i in range(16):
+        boundary = Boundary(50 + 25 * i, 450)
+        boundary_list.append(boundary)
+    
+    for i in range (3):
+        boundary = Boundary(100 + 25 * i, 375)
+        boundary_list.append(boundary)
+
+    for i in range (6):
+        boundary = Boundary(225 + 25 * i, 375)
+        boundary_list.append(boundary)
+    
+    for i in range (2):
+        boundary = Boundary(375 + 25 * i, 300)
+        boundary_list.append(boundary)
+
+    for i in range (4):
+        boundary = Boundary(150 + 25 * i, 225)
+        boundary_list.append(boundary)
+    
+    for i in range (2):
+        boundary = Boundary(275 + 125 * i, 150)
+        boundary_list.append(boundary)
 
 player1 = Player(245, GROUND_Y, walk_frames, player1_controls)
 player2 = Player(400, GROUND_Y, walk_frames, player2_controls)
 
+players = []
+players.append(player1)
+players.append(player2)
 x_offset = 0
 running = True
 
@@ -273,6 +307,7 @@ while running:
     handle_player(player1, keys, dt)
     handle_player(player2, keys, dt)
 
+    
     apply_physics(player1, dt)
     apply_physics(player2, dt)
     
@@ -280,6 +315,10 @@ while running:
         boundary.update(x_offset)
 
     screen.fill(WHITE)
+    for player in players:
+        if checkHealth(player, dt) == False:
+            running = False
+
     #screen.blit(frame_standing, (0, 0))
     screen.blit(player1.image, player1.rect)
     screen.blit(player2.image, player2.rect)
