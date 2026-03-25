@@ -1,6 +1,10 @@
 import pygame
 import math
 import player_utils
+import boundary
+import map_create
+from projectile import NewProjectile
+from player import NewPlayer
 
 pygame.init()
 
@@ -66,8 +70,8 @@ player1_controls = {
     "right": pygame.K_d,
     "jump": pygame.K_w,
     "dash": pygame.K_LSHIFT,
-    "throw": pygame.K_p,
-    "melee": pygame.K_o
+    "throw": pygame.K_1,
+    "melee": pygame.K_2
 }
 
 player2_controls = {
@@ -78,105 +82,6 @@ player2_controls = {
     "throw": pygame.K_p,
     "melee": pygame.K_o
 }
-
-class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y, walk_frames, controls):
-        super().__init__()
-        self.walk_frame = walk_frames
-        self.walk_frame_index = 0
-        self.image = self.walk_frame[self.walk_frame_index]
-        #self.image.fill(GRAY)
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        self.velocity_x = 0
-        self.velocity_y = 0
-        self.isOnGround = True
-        self.dash = False
-        self.canDash = True
-        self.mostRecentXDirection = 'Right'
-        self.dashTime = 0
-        self.dashDuration = 0.15
-        self.dashSpeed = 800
-        self.isOnEdgeOfScreen = False
-        self.health = 100
-
-        self.hasThrown = False
-
-        self.controls = controls
-
-        self.animation_timer = 0
-        self.animation_speed = 0.1
-
-        self.hitbox = self.rect.inflate(WIDTH * -0.06, HEIGHT * -0.02)
-        self.hitbox.center = self.rect.center
-        self.hitbox.centerx -= 1
-        self.hitbox.centery += 1
-
-        self.healthbar = self.rect.inflate(WIDTH * 0.02, HEIGHT * -0.075)
-        self.healthbar.center = self.rect.center
-        self.healthbar.centerx -= 1
-        self.healthbar.centery -= 30
-
-        self.lives = 3
-
-        self.alive = True
-        
-    def update (self, dt):
-        self.animation_timer += dt
-        self.hitbox.center = self.rect.center
-        self.hitbox.centerx -= 1
-        self.hitbox.centery += 1
-
-        frame = self.walk_frame[self.walk_frame_index]
-        if self.velocity_x == 0:
-            frame = self.walk_frame[0]
-        if self.dash:
-            frame = self.walk_frame[7]
-        elif self.animation_timer > self.animation_speed and self.velocity_x != 0:
-            self.walk_frame_index = (self.walk_frame_index + 1) % (len (self.walk_frame) - 1)
-            self.animation_timer = 0
-            frame = self.walk_frame[self.walk_frame_index]
-
-        if self.mostRecentXDirection == 'Left':
-            frame = pygame.transform.flip(frame, True, False)
-            
-        self.image = frame
-        self.image.set_colorkey(BLACK)
-        return
-
-def handle_player(player, keys, dt):
-    if keys[player.controls["left"]]:
-        player.velocity_x -= ACCELERATION * dt
-        player.mostRecentXDirection = 'Left'
-
-    if keys[player.controls["right"]]:
-        player.velocity_x += ACCELERATION * dt
-        player.mostRecentXDirection = 'Right'
-
-    if not keys[player.controls["left"]] and not keys[player.controls["right"]]:
-        if player.velocity_x > 0:
-            player.velocity_x -= FRICTION * dt
-            if player.velocity_x < 0:
-                player.velocity_x = 0
-        elif player.velocity_x < 0:
-            player.velocity_x += FRICTION * dt
-            if player.velocity_x > 0:
-                player.velocity_x = 0
-
-    if player.dash:
-        player.dashTime -= dt
-        if player.dashTime <= 0:
-            player.dash = False
-    
-    # apply gravity
-    player.velocity_y += GRAVITY * dt
-
-    # clamp horizontal speed
-    if not player.dash:
-        player.velocity_x = max(-MAX_SPEED, min(MAX_SPEED, player.velocity_x))
-    if player.dash:
-        player.velocity_x = max(-MAX_DASH_SPEED, min(MAX_DASH_SPEED, player.velocity_x))
 
 def handle_event(player, event):
     if event.type == pygame.KEYDOWN:
@@ -196,154 +101,30 @@ def handle_event(player, event):
                 player.velocity_x = -player.dashSpeed
         
         if event.key == player.controls["throw"] and not player.hasThrown and player.canDash:
-            projectile = Projectile(player.rect.x, player.rect.y, player.mostRecentXDirection)
-            projectile_group.append(projectile)
+            p = NewProjectile(player.rect.x, player.rect.y, player.mostRecentXDirection, throwing_knife_sheet_image)
+            projectile_group.append(p)
+            player.projectiles.append(p)
             player.hasThrown = True
 
-def checkHealth(player, dt):
-    if player.rect.y == GROUND_Y:
-        screen.fill(BLACK)
-        player.alive = False
-        player.lives -= 1
-        if player.lives != 0:
-            # respawn
-            player.health = 100
-            player.alive = True
-            player.rect.y = 0
-            player.rect.x = 245
-        else:
-            return False
-
-def apply_physics(player, dt):
-    global x_offset
-
-    #if player.hitbox.right <= PLAYER_RIGHT_LIMIT and player.hitbox.left >= PLAYER_LEFT_LIMIT:
-    player.hitbox.x += player.velocity_x * dt
-    for boundary in boundary_list:
-        if player.hitbox.colliderect(boundary.rect):
-            if player.velocity_x > 0:
-                player.hitbox.right = boundary.rect.left
-            elif player.velocity_x < 0:
-                player.hitbox.left = boundary.rect.right
-            player.velocity_x = 0
-
-    player.isOnEdgeOfScreen = False
-
-    # Vertical
-    player.hitbox.y += player.velocity_y * dt
-    for boundary in boundary_list:
-        if player.hitbox.colliderect(boundary.rect):
-            if player.velocity_y > 0:
-                player.hitbox.bottom = boundary.rect.top
-                player.velocity_y = 0
-                player.isOnGround = True
-            elif player.velocity_y < 0:
-                player.hitbox.top = boundary.rect.bottom
-                player.velocity_y = 0
-
-    # Sync
-    player.rect.center = player.hitbox.center
-    player.rect.x += 1
-    player.rect.y -= 1
-
-    player.healthbar.center = player.rect.center
-    player.healthbar.centerx -= 1
-    player.healthbar.centery -= 30
-
-    if player.rect.y >= GROUND_Y:
-        player.rect.y = GROUND_Y
-        player.velocity_y = 0
-        player.isOnGround = True
-        player.dash = False
-        player.canDash = False
-
-class Boundary(pygame.sprite.Sprite):
-    def __init__(self, module_x, module_y):
-        super().__init__()
-        self.image = pygame.transform.scale(brick_sheet_image,(25, 25))
-        self.rect = self.image.get_rect()
-        #self.image.fill(GRAY)
-        self.rect = self.image.get_rect()
-        self.rect.x = module_x
-        self.rect.y = module_y
-    def update(self, x_offset):
-        self.rect.x -= x_offset
-
-class Projectile(pygame.sprite.Sprite):
-    def __init__(self, x, y, direction):
-        super().__init__()
-
-        self.original_image = pygame.transform.scale(throwing_knife_sheet_image, (28, 28))
-        self.image = self.original_image
-        self.rect = self.image.get_rect(center=(x, y))
-
-        # Float position (IMPORTANT)
-        self.pos = pygame.Vector2(x, y)
-
-        speed = 600
-        upward_force = -50
-        gravity = 1000
-
-        # Direction-based velocity
-        if direction == 'Right':
-            self.vel = pygame.Vector2(speed, upward_force)
-        else:
-            self.vel = pygame.Vector2(-speed, upward_force)
-
-        self.gravity = gravity
-    def update(self, dt):
-        # Apply gravity
-        self.vel.y += self.gravity * dt
-
-        # Move projectile
-        self.pos += self.vel * dt
-
-        angle = math.degrees(math.atan2(-self.vel.y, self.vel.x))
-
-        self.image = pygame.transform.rotate(self.original_image, angle-40)
-        self.rect = self.image.get_rect(center=(int(self.pos.x), int(self.pos.y)))
 
 boundary_list = []
-if MAP == 'map1':
 
-    for i in range(16):
-        boundary = Boundary(50 + 25 * i, 450)
-        boundary_list.append(boundary)
-    
-    for i in range (3):
-        boundary = Boundary(100 + 25 * i, 375)
-        boundary_list.append(boundary)
+MAP = 'map1'
 
-    for i in range (6):
-        boundary = Boundary(225 + 25 * i, 375)
-        boundary_list.append(boundary)
-    
-    for i in range (2):
-        boundary = Boundary(375 + 25 * i, 300)
-        boundary_list.append(boundary)
+map_create.create_map(boundary_list, MAP, brick_sheet_image)
 
-    for i in range (4):
-        boundary = Boundary(150 + 25 * i, 225)
-        boundary_list.append(boundary)
-    
-    for i in range (2):
-        boundary = Boundary(275 + 125 * i, 150)
-        boundary_list.append(boundary)
-
-player1 = Player(245, GROUND_Y, walk_frames, player1_controls)
-player2 = Player(400, GROUND_Y, walk_frames, player2_controls)
+player1 = NewPlayer(245, GROUND_Y, walk_frames, player1_controls, WIDTH, HEIGHT)
+player2 = NewPlayer(400, GROUND_Y, walk_frames, player2_controls, WIDTH, HEIGHT)
 
 players = []
 players.append(player1)
 players.append(player2)
-x_offset = 0
 running = True
 
 while running:
     dt = clock.tick(60) / 1000  # seconds per frame
-    player1.update(dt)
-    player2.update(dt)
-    x_offset = 0
+    player1.update(dt, BLACK)
+    player2.update(dt, BLACK)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -357,31 +138,30 @@ while running:
 
     keys = pygame.key.get_pressed()
 
-    handle_player(player1, keys, dt)
-    handle_player(player2, keys, dt)
-
-    if len(projectile_group) == 0:
-            player1.hasThrown = False
-            player2.hasThrown = False
+    player_utils.handle_player(player1, keys, dt)
+    player_utils.handle_player(player2, keys, dt)
+    
+    for player in players:
+        for p in player.projectiles[:]:
+            if p.rect.bottom >= GROUND_Y:
+                player.projectiles.remove(p)
+                projectile_group.remove(p)
+                player.hasThrown = False
         
     for projectile in projectile_group[:]:
         if projectile.rect.bottom >= GROUND_Y:
             projectile_group.remove(projectile)
 
-    apply_physics(player1, dt)
-    apply_physics(player2, dt)
+    player_utils.apply_physics(player1, boundary_list, dt)
+    player_utils.apply_physics(player2, boundary_list, dt)
     
-    for boundary in boundary_list:
-        boundary.update(x_offset)
-
     screen.fill(WHITE)
-
     
     for projectile in projectile_group:
         projectile.update(dt)
 
     for player in players:
-        if checkHealth(player, dt) == False:
+        if player_utils.checkHealth(player, dt) == False:
             running = False
 
     #screen.blit(frame_standing, (0, 0))
