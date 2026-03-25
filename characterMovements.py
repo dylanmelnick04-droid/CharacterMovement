@@ -30,6 +30,7 @@ sprite_sheet_image = pygame.image.load('character.png').convert_alpha()
 brick_sheet_image = pygame.image.load('square_brick.jpg').convert_alpha()
 throwing_knife_sheet_image = pygame.image.load('throwing_knife.png').convert_alpha()
 fireball_sheet_image = pygame.image.load('fireball.png').convert_alpha()
+name_of_the_wind_sheet_image = pygame.image.load('name_of_the_wind.png').convert_alpha()
 
 GRAVITY = 1500
 ACCELERATION = 1500
@@ -66,7 +67,8 @@ NAME_OF_THE_WIND = {
     "damage": 100,
     "speed": 1000,
     "upward_force": -20,
-    "image": throwing_knife_sheet_image,
+    "image": name_of_the_wind_sheet_image,
+    "image_offset": 0,
     "character_melee_damage": 5,
     "melee_cooldown": 8
 }
@@ -75,6 +77,7 @@ THOR = {
     "speed": 800,
     "upward_force": -20,
     "image": throwing_knife_sheet_image,
+    "image_offset": 0,
     "character_melee_damage": 80,
     "melee_cooldown": 10
 }
@@ -157,7 +160,7 @@ MAP = 'map1'
 
 map_create.create_map(boundary_list, MAP, brick_sheet_image)
 
-player1 = NewPlayer(245, GROUND_Y, walk_frames, player1_controls, WIDTH, HEIGHT, THROWING_KNIFE)
+player1 = NewPlayer(245, GROUND_Y, walk_frames, player1_controls, WIDTH, HEIGHT, NAME_OF_THE_WIND)
 player2 = NewPlayer(400, GROUND_Y, walk_frames, player2_controls, WIDTH, HEIGHT, FIREBALL)
 
 players = []
