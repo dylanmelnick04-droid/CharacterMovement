@@ -1,1 +1,1 @@
-This project has taken aproximately 20 hours.
+This project has taken aproximately 22 hours.
