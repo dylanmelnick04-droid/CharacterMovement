@@ -15,8 +15,14 @@ pygame.init()
 devtools = 'on'
 healthbars = 'on'
 backgroundArt = 'on'
+arena = True
 
-MAP = 'map1'
+MAP_LIST = {
+    "map1": "town_hall",
+    "map2": "arena"
+}
+
+MAP = 'map2'
 # colors
 WIDTH, HEIGHT = 500, 500
 WHITE = (255, 255, 255)
@@ -106,7 +112,7 @@ def getImage(sheet, frame, width, height, scale, color):
     return image
 
 
-walk_frames = [
+fireball_walk_frames = [
     getImage(sprite_sheet_image, 0, 24, 24, 2, BLACK),
     getImage(sprite_sheet_image, 5, 24, 24, 2, BLACK),
     getImage(sprite_sheet_image, 6, 24, 24, 2, BLACK),
@@ -189,12 +195,10 @@ def handle_event(player, event, players):
 
 boundary_list = []
 
-MAP = 'map1'
-
-map_create.create_map(boundary_list, MAP, brick_sheet_image)
+map_create.create_map(boundary_list, MAP, brick_sheet_image, arena)
 
 player1 = NewPlayer(245, GROUND_Y, knife_walk_frames, player1_controls, WIDTH, HEIGHT, THROWING_KNIFE)
-player2 = NewPlayer(400, GROUND_Y, walk_frames, player2_controls, WIDTH, HEIGHT, FIREBALL)
+player2 = NewPlayer(400, GROUND_Y, fireball_walk_frames, player2_controls, WIDTH, HEIGHT, FIREBALL)
 
 players = []
 players.append(player1)
@@ -240,7 +244,11 @@ while running:
     player_utils.apply_physics(player2, boundary_list, dt)
     
     if backgroundArt == 'on':
-        screen.blit(medieval_down_background_image, (0, 0))
+        match MAP:
+            case 'map1':
+                screen.blit(medieval_down_background_image, (0, 0))
+            case 'map2':
+                screen.fill(BLACK)
     else:
         screen.fill(WHITE)
     
