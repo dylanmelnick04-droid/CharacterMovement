@@ -12,8 +12,10 @@ pygame.init()
 # coin clip jpg is 1369p x 360p
 # add attacks and health bar depletion next
 
-devtools = 'on'
-healthbars = 'off'
+devtools = 'off'
+healthbars = 'on'
+backgroundArt = 'on'
+
 MAP = 'map1'
 # colors
 WIDTH, HEIGHT = 500, 500
@@ -27,12 +29,15 @@ pygame.display.set_caption("Character Mechanics")
 
 clock = pygame.time.Clock()
 sprite_sheet_image = pygame.image.load('character.png').convert_alpha()
+thor_sprite_sheet_image = pygame.image.load('thor_sprite_sheet.png').convert_alpha()
+knife_sprite_sheet_image = pygame.image.load('fireball_sprite_sheet.png').convert_alpha()
 brick_sheet_image = pygame.image.load('square_brick.jpg').convert_alpha()
 throwing_knife_sheet_image = pygame.image.load('throwing_knife.png').convert_alpha()
 fireball_sheet_image = pygame.image.load('fireball.png').convert_alpha()
 name_of_the_wind_sheet_image = pygame.image.load('name_of_the_wind.png').convert_alpha()
 thor_hammer_sheet_image = pygame.image.load('thor-hammer.png').convert_alpha()
 crit_sheet_image = pygame.image.load('crit.jpg').convert_alpha()
+medieval_down_background_image = pygame.image.load('medieval_town_background.jpg').convert_alpha()
 
 GRAVITY = 1500
 ACCELERATION = 1500
@@ -50,6 +55,7 @@ FIREBALL_DAMAGE = 33
 FIREBALL = {
     "damage": 33,
     "speed": 200,
+    "health": 150,
     "upward_force": -50,
     "image": fireball_sheet_image,
     "image_offset": 220,
@@ -59,6 +65,7 @@ FIREBALL = {
 THROWING_KNIFE = {
     "damage": 10,
     "speed": 600,
+    "health": 80,
     "upward_force": -50,
     "image": throwing_knife_sheet_image,
     "image_offset": 40,
@@ -68,6 +75,7 @@ THROWING_KNIFE = {
 NAME_OF_THE_WIND = {
     "damage": 100,
     "speed": 1000,
+    "health": 100,
     "upward_force": -20,
     "image": name_of_the_wind_sheet_image,
     "image_offset": 0,
@@ -77,6 +85,7 @@ NAME_OF_THE_WIND = {
 THOR = {
     "damage": 50,
     "speed": 800,
+    "health": 200,
     "upward_force": -20,
     "image": thor_hammer_sheet_image,
     "image_offset": 90,
@@ -106,6 +115,28 @@ walk_frames = [
     getImage(sprite_sheet_image, 9, 24, 24, 2, BLACK),
     getImage(sprite_sheet_image, 10, 24, 24, 2, BLACK),
     getImage(sprite_sheet_image, 23, 24, 24, 2, BLACK)
+]
+
+thor_walk_frames = [
+    getImage(thor_sprite_sheet_image, 0, 158, 129, .35, BLACK),
+    getImage(thor_sprite_sheet_image, 1, 228, 129, .35, BLACK),
+    getImage(thor_sprite_sheet_image, 2, 214, 129, .35, BLACK),
+    getImage(thor_sprite_sheet_image, 3, 170, 129, .35, BLACK),
+    getImage(thor_sprite_sheet_image, 4, 157, 129, .35, BLACK),
+    getImage(thor_sprite_sheet_image, 5, 147, 129, .35, BLACK),
+    getImage(thor_sprite_sheet_image, 6, 117, 129, .35, BLACK),
+    getImage(thor_sprite_sheet_image, 7, 170, 129, .35, BLACK)
+]
+
+knife_walk_frames = [
+    getImage(knife_sprite_sheet_image, 3, 77, 100, .45, BLACK),
+    getImage(knife_sprite_sheet_image, 0, 77, 100, .45, BLACK),
+    getImage(knife_sprite_sheet_image, 1, 77, 100, .45, BLACK),
+    getImage(knife_sprite_sheet_image, 2, 77, 100, .45, BLACK),
+    getImage(knife_sprite_sheet_image, 3, 77, 100, .45, BLACK),
+    getImage(knife_sprite_sheet_image, 0, 77, 100, .45, BLACK),
+    getImage(knife_sprite_sheet_image, 1, 77, 100, .45, BLACK),
+    getImage(knife_sprite_sheet_image, 2, 77, 100, .45, BLACK)
 ]
 
 player1_controls = {
@@ -162,7 +193,7 @@ MAP = 'map1'
 
 map_create.create_map(boundary_list, MAP, brick_sheet_image)
 
-player1 = NewPlayer(245, GROUND_Y, walk_frames, player1_controls, WIDTH, HEIGHT, THOR)
+player1 = NewPlayer(245, GROUND_Y, knife_walk_frames, player1_controls, WIDTH, HEIGHT, THROWING_KNIFE)
 player2 = NewPlayer(400, GROUND_Y, walk_frames, player2_controls, WIDTH, HEIGHT, FIREBALL)
 
 players = []
@@ -208,13 +239,16 @@ while running:
     player_utils.apply_physics(player1, boundary_list, dt)
     player_utils.apply_physics(player2, boundary_list, dt)
     
-    screen.fill(WHITE)
+    if backgroundArt == 'on':
+        screen.blit(medieval_down_background_image, (0, 0))
+    else:
+        screen.fill(WHITE)
     
     for projectile in projectile_group:
         projectile.update(dt)
     
     for projectile in projectile_group:
-        if projectile_utils.checkCollision(projectile, players) == True:
+        if projectile_utils.checkCollision(projectile, players) == True and devtools == 'on':
             screen.fill(BLACK)
 
     for player in players:
@@ -234,8 +268,8 @@ while running:
         pygame.draw.rect(screen, (255,0,0), player2.hitbox, 2)
     if healthbars == 'on':
         #print(player1.healthbar)
-        pygame.draw.rect(screen, (0, 122, 122), player1.healthbar)
-        pygame.draw.rect(screen, (0, 122, 122), player2.healthbar)
+        player_utils.drawHealthbar(player1, screen)
+        player_utils.drawHealthbar(player2, screen)
     
     current_time = pygame.time.get_ticks() / 1000
 

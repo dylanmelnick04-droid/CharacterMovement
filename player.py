@@ -9,7 +9,7 @@ class NewPlayer(pygame.sprite.Sprite):
         #self.image.fill(GRAY)
         self.rect = self.image.get_rect()
         self.rect.x = x
-        self.rect.y = y
+        self.rect.y = y-50
         self.velocity_x = 0
         self.velocity_y = 0
         self.isOnGround = True
@@ -20,7 +20,8 @@ class NewPlayer(pygame.sprite.Sprite):
         self.dashDuration = 0.15
         self.dashSpeed = 800
         self.isOnEdgeOfScreen = False
-        self.health = 100
+        self.maxHealth = projectileType["health"]
+        self.health = self.maxHealth
         self.crit_start_time = 0      # time when crit appears
         self.crit_duration = 0.5      # seconds
         self.displayCrit = False
@@ -45,10 +46,15 @@ class NewPlayer(pygame.sprite.Sprite):
         self.hitbox.centerx -= 1
         self.hitbox.centery += 1
 
+        health_ratio = self.health / self.maxHealth
+
         self.healthbar = self.rect.inflate(WIDTH * 0.02, HEIGHT * -0.075)
         self.healthbar.center = self.rect.center
         self.healthbar.centerx -= 1
         self.healthbar.centery -= 30
+
+        current_width = int(self.healthbar.width * health_ratio)
+        current_bar = pygame.Rect(self.healthbar.x, self.healthbar.y, current_width, self.healthbar.height)
 
         self.lives = 3
 

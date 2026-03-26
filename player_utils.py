@@ -51,7 +51,7 @@ def checkHealth(player, dt):
         player.lives -= 1
         if player.lives != 0:
             # respawn
-            player.health = 100
+            player.health = player.maxHealth
             player.alive = True
             player.rect.y = 0
             player.rect.x = 245
@@ -112,3 +112,25 @@ def meleeAttack(player, players):
             else:
                 p.health -= player.melee_damage
     return
+
+
+def drawHealthbar(player, screen):
+    # update position
+    player.healthbar.center = player.rect.center
+    player.healthbar.centery -= 30
+
+    # calculate ratio
+    health_ratio = player.health / player.maxHealth
+
+    # background
+    pygame.draw.rect(screen, (255, 0, 0), player.healthbar)
+
+    # foreground
+    current_width = int(player.healthbar.width * health_ratio)
+    current_bar = pygame.Rect(
+        player.healthbar.x,
+        player.healthbar.y,
+        current_width,
+        player.healthbar.height
+    )
+    pygame.draw.rect(screen, (0, 255, 0), current_bar)
