@@ -20,7 +20,7 @@ player2_character = 'throwing_knife'
 arena = False
 drop_in_height = 100
 
-MAP = 'map4'
+MAP = 'map2'
 
 MAP_LIST = {
     "map1": "town_hall",
@@ -288,7 +288,7 @@ while running:
             case 'map1':
                 screen.blit(medieval_town_background_image, (0, 0))
             case 'map2':
-                screen.fill(BLACK)
+                screen.blit(space_background_image, (0, 0))
             case 'map3':
                 screen.blit(bowl_of_milk_background_image, (0, 0))
             case 'map4':

@@ -35,6 +35,7 @@ def create_map(boundary_list, MAP, block_types, arena):
     
         case 'map2':
             image = block_types[0]
+            arena = True
 
         case 'map3':
             image = block_types[1]
