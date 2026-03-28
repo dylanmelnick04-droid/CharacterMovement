@@ -12,8 +12,8 @@ pygame.init()
 # coin clip jpg is 1369p x 360p
 # add lives and character stats in corner
 
-devtools = 'off'
-healthbars = 'off'
+devtools = 'on'
+healthbars = 'on'
 backgroundArt = 'on'
 player1_character = 'fireball'
 player2_character = 'throwing_knife'
@@ -307,8 +307,8 @@ while running:
         if player_utils.checkHealth(player, dt, drop_in_height) == False:
             running = False
 
-    #screen.blit(player1.image, player1.rect)
-    #screen.blit(player2.image, player2.rect)
+    screen.blit(player1.image, player1.rect)
+    screen.blit(player2.image, player2.rect)
     for boundary in boundary_list:
         screen.blit(boundary.image, boundary.rect)
     for projectile in projectile_group:
