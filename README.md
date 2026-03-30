@@ -5,6 +5,6 @@
 * [revolvingQueue](stage_select/revolvingQueue.py) runs the stage select. Both `enter` keys select the stage.
 
 **Stage Changing**:
-`current_stage` determines which stage is running. Between stages 1-4, `current_stage` should be updated via a return in the class stage (see [gameplay_stage](gameplay/gameplay_stage.py) and [pick_map_stage](stage_select/pick_map_stage) for examples).
+`current_stage` determines which stage is running. Between stages 1-4, `current_stage` should be updated via a return in the class stage (see [gameplay_stage](gameplay/gameplay_stage.py) and [pick_map_stage](stage_select/pick_map_stage.py) for examples).
 
 This project has taken aproximately `36` hours.
