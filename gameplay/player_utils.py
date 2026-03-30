@@ -1,5 +1,5 @@
 import pygame
-from projectile import NewProjectile
+from gameplay.projectile import NewProjectile
 
 GRAVITY = 1500
 ACCELERATION = 1500
@@ -89,7 +89,7 @@ def checkHealth(player, dt, dropInHeight):
         #screen.fill(BLACK)
         player.alive = False
         player.lives -= 1
-        if player.lives != 0:
+        if player.lives > 0:
             # respawn
             player.health = player.maxHealth
             player.alive = True

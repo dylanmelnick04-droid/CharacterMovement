@@ -1,6 +1,8 @@
 import pygame
 import numpy as np
 import revolvingQueue_utils
+from pick_map_stage import PickMapStage
+from gameplay.gameplay_stage import GamePlayStage
 
 pygame.init()
 
@@ -11,7 +13,6 @@ CREME = (255, 255, 220)
 BLACK = (0, 0, 0)
 SHEAR_X = 0.0
 SHEAR_Y = 0.1
-
 SCALE_INT = 150
 
 my_font = pygame.font.SysFont('Veranda', 30)
@@ -40,32 +41,8 @@ map_image_list = [
 
 # track most recent direction for blit order
 mostRecentDirection = -1
-
+current_stage = PickMapStage()
 running = True
 
 while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_q:
-                running = False
-            
-            if event.key == pygame.K_RIGHT:
-                revolvingQueue_utils.shift_right(map_image_list)
-                print("shift right")
-                mostRecentDirection = -1
-            if event.key == pygame.K_LEFT:
-                revolvingQueue_utils.shift_left(map_image_list)
-                print("shift left")
-                mostRecentDirection = 0
-    
-    screen.fill(CREME)
-
-    text_surface = my_font.render("Select a Map", True, (0, 0, 0))
-    screen.blit(text_surface, (190, 100))
-    
-    revolvingQueue_utils.render_maps(screen, map_image_list, object_list, my_font, mostRecentDirection)
-
-    pygame.display.flip()
+    current_stage.updateGameplay()

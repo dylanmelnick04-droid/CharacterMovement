@@ -1,11 +1,11 @@
 import pygame
 import math
-import player_utils
-import projectile_utils
-import boundary
-import map_create
-from projectile import NewProjectile
-from player import NewPlayer
+import gameplay.player_utils
+import gameplay.projectile_utils
+import gameplay.boundary
+import gameplay.map_create
+from gameplay.projectile import NewProjectile
+from gameplay.player import NewPlayer
 
 class GamePlayStage:
     def __init__(self, player1_character, player2_character, MAP, arena):
@@ -37,7 +37,7 @@ class GamePlayStage:
 
         self.boundary_list = []
         self.boundary_list.clear()
-        map_create.create_map(self.boundary_list, self.MAP, self.block_types, self.ENV["arena"])
+        gameplay.map_create.create_map(self.boundary_list, self.MAP, self.block_types, self.ENV["arena"])
 
         self.projectile_group = []
 
@@ -214,12 +214,12 @@ class GamePlayStage:
                 if event.key == pygame.K_r and self.ENV["STAGE"] == 'gameOver':
                     self.reset()
             if self.ENV["STAGE"] == 'gamePlay':
-                player_utils.handle_event(event, self.players, self.ENV, self.projectile_group)
+                gameplay.player_utils.handle_event(event, self.players, self.ENV, self.projectile_group)
 
         keys = pygame.key.get_pressed()
 
         for player in self.players:
-            player_utils.handle_player(player, keys, dt)
+            gameplay.player_utils.handle_player(player, keys, dt)
 
         for player in self.players:
             for p in self.projectile_group[:]:
@@ -227,7 +227,7 @@ class GamePlayStage:
                     self.projectile_group.remove(p)
                     player.hasThrown = False
             if player.hasMeleed == True:
-                player_utils.meleeAttack(player, self.players)
+                gameplay.player_utils.meleeAttack(player, self.players)
                 player.hasMeleed = False
             
             for projectile in self.projectile_group[:]:
@@ -235,21 +235,24 @@ class GamePlayStage:
                     self.projectile_group.remove(projectile)
 
             for player in self.players:
-                player_utils.apply_physics(player, self.boundary_list, dt)
+                gameplay.player_utils.apply_physics(player, self.boundary_list, dt)
                 
             for projectile in self.projectile_group:
                 projectile.update(dt)
             
             for projectile in self.projectile_group:
-                if projectile_utils.checkCollision(projectile, self.players) == True and self.ENV["devtools"] == 'on':
+                if gameplay.projectile_utils.checkCollision(projectile, self.players) == True and self.ENV["devtools"] == 'on':
                     self.screen.fill(self.BLACK)
 
-            for player in self.players:
-                if player_utils.checkHealth(player, dt, self.drop_in_height) == False:
-                    self.ENV["STAGE"] = 'gameOver'
+        for player in self.players:
+            if gameplay.player_utils.checkHealth(player, dt, self.drop_in_height) == False:
+                self.ENV["STAGE"] = 'gameOver'
+                print("gg")
+                exit()
        
         self.draw()
         pygame.display.flip()
+        return self
 
     def draw(self):
         if self.ENV["backgroundArt"] == 'on':
@@ -272,7 +275,7 @@ class GamePlayStage:
         
         if self.ENV["healthbars"] == 'on':
             for player in self.players:
-                player_utils.drawHealthbar(player, self.screen)
+                gameplay.player_utils.drawHealthbar(player, self.screen)
 
         current_time = pygame.time.get_ticks() / 1000
 
@@ -294,24 +297,24 @@ class GamePlayStage:
                 print("crit")
         
         if self.ENV.get("displayCharacterStats") == 'on':
-            player_utils.displayCharacterStats(self.screen, self.character_stats_font, self.WHITE, self.players)
+            gameplay.player_utils.displayCharacterStats(self.screen, self.character_stats_font, self.WHITE, self.players)
         
-        player_utils.displayerCharacterLives(self.screen, self.character_lives_font, self.WHITE, self.players)
+        gameplay.player_utils.displayerCharacterLives(self.screen, self.character_lives_font, self.WHITE, self.players)
 
     def draw_background(self):
         match self.MAP:
-            case 'map1':
+            case 'Town Hall':
                 self.screen.blit(self.medieval_town_background_image, (0, 0))
-            case 'map2':
+            case 'Arena':
                 self.screen.blit(self.space_background_image, (0, 0))
-            case 'map3':
+            case 'Bowl of Milk':
                 self.screen.blit(self.bowl_of_milk_background_image, (0, 0))
-            case 'map4':
+            case 'Starry Space':
                 self.screen.blit(self.space_background_image, (0, 0))
 
     def reset(self):
         self.boundary_list.clear()
-        map_create.create_map(self.boundary_list, self.MAP, self.block_types, False)
+        gameplay.map_create.create_map(self.boundary_list, self.MAP, self.block_types, False)
 
         self.projectile_group.clear()
 
