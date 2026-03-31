@@ -46,7 +46,7 @@ class PickMapStage:
             {"name": "Starry Space", "idx": 3, "image": self.space_map_background_image},
             {"name": "map5", "idx": 4, "image": self.medieval_town_background_image}
         ]
-        self.map_pointer_index = next( # user iterator here
+        self.map_pointer_index = next(
             (i for i, m in enumerate(self.map_image_list) if m["name"] == "Bowl of Milk"),
             None
         )
