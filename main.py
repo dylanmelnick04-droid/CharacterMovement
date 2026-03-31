@@ -1,5 +1,4 @@
 import pygame
-import numpy as np
 import map_select.revolvingQueue_utils
 from map_select.pick_map_stage import PickMapStage
 from gameplay.gameplay_stage import GamePlayStage

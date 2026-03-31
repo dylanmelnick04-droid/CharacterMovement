@@ -70,6 +70,7 @@ class GamePlayStage:
         self.medieval_town_background_image = pygame.image.load('image_reference/background/medieval_town_background.jpg').convert_alpha()
         self.bowl_of_milk_background_image = pygame.image.load('image_reference/background/bowl_of_milk.jpg').convert_alpha()
         self.space_background_image = pygame.image.load('image_reference/background/space_background.jpg').convert_alpha()
+        self.doodle_background_image = pygame.image.load('image_reference/background/doodle_map.png').convert_alpha()
 
         self.fireball_walk_frames = [
             self.getImage(self.sprite_sheet_image, 0, 24, 24, 2, self.BLACK),
@@ -179,7 +180,7 @@ class GamePlayStage:
         self.FRICTION = 1200
         self.MAX_SPEED = 400
         self.MAX_DASH_SPEED = 700
-        if self.MAP == 'map4':
+        if self.MAP == 'Starry Space':
             self.JUMP_STRENGTH = -750
         else:
             self.JUMP_STRENGTH = -500
@@ -312,8 +313,8 @@ class GamePlayStage:
                 self.screen.blit(self.bowl_of_milk_background_image, (0, 0))
             case 'Starry Space':
                 self.screen.blit(self.space_background_image, (0, 0))
-            case 'map5':
-                self.screen.blit(self.medieval_town_background_image, (0, 0))
+            case 'Doodle':
+                self.screen.blit(self.doodle_background_image, (0, 0))
 
     def reset(self):
         self.boundary_list.clear()

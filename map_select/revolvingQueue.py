@@ -36,7 +36,7 @@ map_image_list = [
     {"name": "Arena", "idx": 1, "image": arena_background_image},
     {"name": "Bowl of Milk", "idx": 2, "image": milk_map_background_image},
     {"name": "Starry Space", "idx": 3, "image": space_map_background_image},
-    {"name": "map5", "idx": 4, "image": medieval_town_background_image}
+    {"name": "Doodle", "idx": 4, "image": medieval_town_background_image}
 ]
 
 # track most recent direction for blit order

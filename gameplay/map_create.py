@@ -112,8 +112,10 @@ def create_map(boundary_list, MAP, block_types, arena):
                 boundary_list.append(b)
                 b = gameplay.boundary.Boundary(200, 25, image)
                 boundary_list.append(b)
+        case 'Doodle':
+            image = block_types[1]
 
-    if arena == True or MAP == 'Arena':
+    if arena == True or MAP == 'Arena' or MAP == "Doodle":
         makeArena(boundary_list, MAP, image)
 
 
