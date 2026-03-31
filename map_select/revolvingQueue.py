@@ -21,10 +21,10 @@ my_font = pygame.font.SysFont('Veranda', 30)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Pick Arena")
 
-medieval_town_background_image = pygame.image.load('image_reference/stage_select/medieval_town_map.png').convert_alpha()
-arena_background_image = pygame.image.load('image_reference/stage_select/arena_map.png').convert_alpha()
-milk_map_background_image = pygame.image.load('image_reference/stage_select/milk_map.png').convert_alpha()
-space_map_background_image = pygame.image.load('image_reference/stage_select/space_map.png').convert_alpha()
+medieval_town_background_image = pygame.image.load('image_reference/map_select/medieval_town_map.png').convert_alpha()
+arena_background_image = pygame.image.load('image_reference/map_select/arena_map.png').convert_alpha()
+milk_map_background_image = pygame.image.load('image_reference/map_select/milk_map.png').convert_alpha()
+space_map_background_image = pygame.image.load('image_reference/map_select/space_map.png').convert_alpha()
 space_background_image = pygame.image.load('image_reference/background/space_background.jpg').convert_alpha()
 
 object_list = []

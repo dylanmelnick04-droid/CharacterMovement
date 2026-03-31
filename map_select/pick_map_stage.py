@@ -1,6 +1,6 @@
 import pygame
 import numpy as np
-import stage_select.revolvingQueue_utils
+import map_select.revolvingQueue_utils
 from gameplay.gameplay_stage import GamePlayStage
 
 class PickMapStage:
@@ -63,12 +63,12 @@ class PickMapStage:
                     exit()
                 
                 if event.key == pygame.K_RIGHT:
-                    stage_select.revolvingQueue_utils.shift_right(self.map_image_list)
+                    map_select.revolvingQueue_utils.shift_right(self.map_image_list)
                     print("shift right")
                     self.map_pointer_index = self.map_pointer_index + 1
                     self.mostRecentDirection = -1
                 if event.key == pygame.K_LEFT:
-                    stage_select.revolvingQueue_utils.shift_left(self.map_image_list)
+                    map_select.revolvingQueue_utils.shift_left(self.map_image_list)
                     self.map_pointer_index = self.map_pointer_index - 1
                     print("shift left")
                     self.mostRecentDirection = 0
@@ -81,7 +81,7 @@ class PickMapStage:
         text_surface = self.my_font.render("Select a Map", True, (0, 0, 0))
         self.screen.blit(text_surface, (190, 100))
         
-        stage_select.revolvingQueue_utils.render_maps(self.screen, self.map_image_list, self.object_list, self.my_font, self.mostRecentDirection)
+        map_select.revolvingQueue_utils.render_maps(self.screen, self.map_image_list, self.object_list, self.my_font, self.mostRecentDirection)
 
         pygame.display.flip()
     
