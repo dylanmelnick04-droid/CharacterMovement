@@ -10,4 +10,4 @@
 *TODO*:
 - fourth character animation
 
-This project has taken aproximately `40` hours.
+This project has taken aproximately `41` hours.
