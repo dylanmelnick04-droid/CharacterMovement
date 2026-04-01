@@ -60,6 +60,8 @@ class GameOverStage:
 
         text_surface = self.restart_font.render("Press 'r' to restart.", True, self.GRAY)
         self.screen.blit(text_surface, (190, 150))
+        text_surface = self.restart_font.render("Press 'q' to quit.", True, self.GRAY)
+        self.screen.blit(text_surface, (190, 175))
 
         pygame.display.flip()
     
