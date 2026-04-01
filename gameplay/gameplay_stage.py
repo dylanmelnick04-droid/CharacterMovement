@@ -60,6 +60,7 @@ class GamePlayStage:
         self.sprite_sheet_image = pygame.image.load('image_reference/sprite_sheet/fireball_sprite_sheet.png').convert_alpha()
         self.thor_sprite_sheet_image = pygame.image.load('image_reference/sprite_sheet/thor_sprite_sheet.png').convert_alpha()
         self.knife_sprite_sheet_image = pygame.image.load('image_reference/sprite_sheet/throwing_knife_sprite_sheet.png').convert_alpha()
+        self.name_of_the_wind_sprite_sheet_image = pygame.image.load('image_reference/sprite_sheet/name_of_the_wind_sprite_sheet.png').convert_alpha()
         self.brick_sheet_image = pygame.image.load('image_reference/boundary/square_brick.jpg').convert_alpha()
         self.translucent_block_sheet_image = pygame.image.load('image_reference/boundary/translucent_block.jpg').convert_alpha()
         self.rainbow_brick_sheet_image = pygame.image.load('image_reference/boundary/rainbow_brick.jpg').convert_alpha()
@@ -106,6 +107,17 @@ class GamePlayStage:
             self.getImage(self.knife_sprite_sheet_image, 2, 77, 100, .45, self.BLACK)
         ]
 
+        self.name_of_the_wind_walk_frames = [
+            pygame.transform.flip(self.getImage(self.name_of_the_wind_sprite_sheet_image, 1, 90, 112, .45, self.WHITE), True, False).convert_alpha(),
+            pygame.transform.flip(self.getImage(self.name_of_the_wind_sprite_sheet_image, 2, 90, 112, .45, self.WHITE), True, False).convert_alpha(),
+            pygame.transform.flip(self.getImage(self.name_of_the_wind_sprite_sheet_image, 0, 90, 112, .45, self.WHITE), True, False).convert_alpha(),
+            pygame.transform.flip(self.getImage(self.name_of_the_wind_sprite_sheet_image, 1, 90, 112, .45, self.WHITE), True, False).convert_alpha(),
+            pygame.transform.flip(self.getImage(self.name_of_the_wind_sprite_sheet_image, 2, 90, 112, .45, self.WHITE), True, False).convert_alpha(),
+            pygame.transform.flip(self.getImage(self.name_of_the_wind_sprite_sheet_image, 0, 90, 112, .45, self.WHITE), True, False).convert_alpha(),
+            pygame.transform.flip(self.getImage(self.name_of_the_wind_sprite_sheet_image, 1, 90, 112, .45, self.WHITE), True, False).convert_alpha(),
+            pygame.transform.flip(self.getImage(self.name_of_the_wind_sprite_sheet_image, 2, 90, 112, .45, self.WHITE), True, False).convert_alpha()
+        ]
+
         self.player1_controls = {
             "left": pygame.K_a,
             "right": pygame.K_d,
@@ -148,6 +160,7 @@ class GamePlayStage:
             "character_melee_distance": 0.02,
             "melee_cooldown": .5
         }
+
         self.NAME_OF_THE_WIND = {
             "damage": 100,
             "speed": 1000,
@@ -155,7 +168,7 @@ class GamePlayStage:
             "upward_force": -20,
             "image": self.name_of_the_wind_sheet_image,
             "image_offset": 0,
-            "walk_frames": self.knife_walk_frames,
+            "walk_frames": self.name_of_the_wind_walk_frames,
             "character_melee_damage": 5,
             "character_melee_distance": 0.03,
             "melee_cooldown": 8
@@ -232,7 +245,6 @@ class GamePlayStage:
                 if p.rect.bottom >= self.GROUND_Y:
                     self.projectile_group.remove(p)
                     player.hasThrown = False
-                    print("hasthrown = false")
             if player.hasMeleed == True:
                 gameplay.player_utils.meleeAttack(player, self.players)
                 #player.hasMeleed = False

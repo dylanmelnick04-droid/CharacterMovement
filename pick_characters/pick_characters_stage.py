@@ -39,7 +39,6 @@ class PickCharactersStage:
                     print(self.playerOptions[self.playerTwoIndex])
                     return ("PICK_MAP", {"arena": self.arena, "lives": self.lives, "player1_character": self.playerOptions[self.playerOneIndex], "player2_character": self.playerOptions[self.playerTwoIndex]})
                 if event.key == pygame.K_UP:
-                    print(str(self.playerTwoIndex))
                     self.playerTwoIndex = (self.playerTwoIndex + 1) % 4
                 if event.key == pygame.K_DOWN:
                     if self.playerTwoIndex == 0:
@@ -47,7 +46,6 @@ class PickCharactersStage:
                     else:
                         self.playerTwoIndex -= 1
                 if event.key == pygame.K_w:
-                    print(str(self.playerOneIndex))
                     self.playerOneIndex = (self.playerOneIndex + 1) % 4
                 if event.key == pygame.K_s:
                     if self.playerOneIndex == 0:
