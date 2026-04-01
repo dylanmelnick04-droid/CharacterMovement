@@ -9,7 +9,7 @@ from gameplay.player import NewPlayer
 from game_over.game_over_stage import GameOverStage
 
 class GamePlayStage:
-    def __init__(self, player1_character, player2_character, MAP, arena):
+    def __init__(self, player1_character, player2_character, MAP, arena, lives):
         pygame.init()
 
         self.ENV = {
@@ -17,7 +17,7 @@ class GamePlayStage:
             "devtools": 'on',
             "healthbars": 'on',
             "backgroundArt": 'on',
-            "player_lives": 3,
+            "player_lives": lives,
             "displayCharacterStats": 'off',
             "arena": arena
         }

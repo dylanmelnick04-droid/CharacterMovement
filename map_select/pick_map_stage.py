@@ -4,10 +4,11 @@ import map_select.revolvingQueue_utils
 from gameplay.gameplay_stage import GamePlayStage
 
 class PickMapStage:
-    def __init__(self, arena):
+    def __init__(self, arena, lives):
         pygame.init()
 
         self.arena = arena
+        self.lives = lives
 
         self.WIDTH = 500
         self.HEIGHT = 500
@@ -78,7 +79,8 @@ class PickMapStage:
                         "player1_character": "fireball",
                         "player2_character": "throwing_knife",
                         "MAP": self.map_image_list[self.map_pointer_index]["name"],
-                        "arena": self.arena
+                        "arena": self.arena,
+                        "lives": self.lives
                     })
 
         self.screen.fill(self.CREME)
