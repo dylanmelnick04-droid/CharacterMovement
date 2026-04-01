@@ -147,7 +147,7 @@ def apply_physics(player, boundary_list, dt):
 
 def meleeAttack(player, players):
     for p in players:
-        if player != p and player.hitbox.colliderect(p.hitbox):
+        if player != p and player.hitbox.colliderect(p.meleeHitbox):
             if player.dash == True:
                 p.health -= player.melee_damage * 2
                 player.displayCrit = True

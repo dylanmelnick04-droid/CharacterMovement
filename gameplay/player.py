@@ -46,6 +46,10 @@ class NewPlayer(pygame.sprite.Sprite):
         self.hitbox.centerx -= 1
         self.hitbox.centery += 1
 
+        self.meleeHitbox = self.rect.inflate(WIDTH * projectileType["character_melee_distance"], HEIGHT * -0.03)
+        self.meleeHitbox.center = self.rect.center
+        self.meleeHitbox.centery += 1
+
         health_ratio = self.health / self.maxHealth
 
         self.healthbar = self.rect.inflate(WIDTH * 0.02, HEIGHT * -0.075)
@@ -65,6 +69,8 @@ class NewPlayer(pygame.sprite.Sprite):
         self.hitbox.center = self.rect.center
         self.hitbox.centerx -= 1
         self.hitbox.centery += 1
+        self.meleeHitbox.center = self.rect.center
+        self.meleeHitbox.centery -= 1
 
         frame = self.walk_frame[self.walk_frame_index]
         if self.velocity_x == 0:

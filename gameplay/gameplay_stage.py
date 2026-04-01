@@ -133,6 +133,7 @@ class GamePlayStage:
             "image_offset": 220,
             "walk_frames": self.fireball_walk_frames,
             "character_melee_damage": 3,
+            "character_melee_distance": 0.04,
             "melee_cooldown": .5
         }
         self.THROWING_KNIFE = {
@@ -144,6 +145,7 @@ class GamePlayStage:
             "image_offset": 40,
             "walk_frames": self.knife_walk_frames,
             "character_melee_damage": 24,
+            "character_melee_distance": 0.02,
             "melee_cooldown": .5
         }
         self.NAME_OF_THE_WIND = {
@@ -155,6 +157,7 @@ class GamePlayStage:
             "image_offset": 0,
             "walk_frames": self.knife_walk_frames,
             "character_melee_damage": 5,
+            "character_melee_distance": 0.03,
             "melee_cooldown": 8
         }
         self.THOR = {
@@ -166,6 +169,7 @@ class GamePlayStage:
             "image_offset": 90,
             "walk_frames": self.thor_walk_frames,
             "character_melee_damage": 80,
+            "character_melee_distance": 0.04,
             "melee_cooldown": 10
         }
 
@@ -322,6 +326,9 @@ class GamePlayStage:
                 else:
                     self.screen.blit(knife, (x, y))
                 player.hasMeleed = False
+        if self.ENV["devtools"] == 'on':
+            for player in self.players:
+                pygame.draw.rect(self.screen, (255,0,0), player.meleeHitbox, 2)
         
         if self.ENV.get("displayCharacterStats") == 'on':
             gameplay.player_utils.displayCharacterStats(self.screen, self.character_stats_font, self.WHITE, self.players)
