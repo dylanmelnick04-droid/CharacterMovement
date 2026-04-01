@@ -4,11 +4,13 @@ import map_select.revolvingQueue_utils
 from gameplay.gameplay_stage import GamePlayStage
 
 class PickMapStage:
-    def __init__(self, arena, lives):
+    def __init__(self, arena, lives, player1_character, player2_character):
         pygame.init()
 
         self.arena = arena
         self.lives = lives
+        self.player1_character = player1_character
+        self.player2_character = player2_character
 
         self.WIDTH = 500
         self.HEIGHT = 500
@@ -76,8 +78,8 @@ class PickMapStage:
                 if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
                     print("select")
                     return ("GAMEPLAY", {
-                        "player1_character": "fireball",
-                        "player2_character": "throwing_knife",
+                        "player1_character": self.player1_character,
+                        "player2_character": self.player2_character,
                         "MAP": self.map_image_list[self.map_pointer_index]["name"],
                         "arena": self.arena,
                         "lives": self.lives
