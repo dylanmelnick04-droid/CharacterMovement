@@ -12,4 +12,4 @@
 - character select page
 - fourth character animation
 
-This project has taken aproximately `39` hours.
+This project has taken aproximately `40` hours.
