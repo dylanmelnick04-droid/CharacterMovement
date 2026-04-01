@@ -10,6 +10,7 @@
 *TODO*:
 - start page
 - character select page
+- melee hitbox and character hitbox
 - fourth character animation
 
 This project has taken aproximately `40` hours.
