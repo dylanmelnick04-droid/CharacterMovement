@@ -26,6 +26,8 @@ class GamePlayStage:
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         pygame.display.set_caption("Character Mechanics")
 
+        self.playerColors = [(0, 0, 255), (255, 0, 0)]
+
         self.drop_in_height = 100
 
         self.MAP = MAP
@@ -280,8 +282,12 @@ class GamePlayStage:
         else:
             self.screen.fill(self.WHITE)
 
-        for player in self.players:
-            self.screen.blit(player.image, player.rect)
+        if self.player1_character == self.player2_character:
+            for idx, player in enumerate(self.players):
+                player.draw(self.screen, self.playerColors[idx])
+        else:
+            for player in self.players:
+                self.screen.blit(player.image, player.rect)
 
         for boundary in self.boundary_list:
             self.screen.blit(boundary.image, boundary.rect)

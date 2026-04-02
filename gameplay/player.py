@@ -88,3 +88,17 @@ class NewPlayer(pygame.sprite.Sprite):
         self.image = frame
         self.image.set_colorkey(COLORKEY)
         return
+
+    def draw(self, surface, outline_color=None, thickness=2):
+        if outline_color:
+            mask = pygame.mask.from_surface(self.image)
+            outline = mask.to_surface(setcolor=outline_color, unsetcolor=(0, 0, 0, 0))
+
+            # Draw outline
+            for dx in range(-thickness, thickness + 1):
+                for dy in range(-thickness, thickness + 1):
+                    if dx != 0 or dy != 0:
+                        surface.blit(outline, (self.rect.x + dx, self.rect.y + dy))
+
+        # Draw actual sprite
+        surface.blit(self.image, self.rect)
